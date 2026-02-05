@@ -1,0 +1,408 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | ENUMS
+ * |--------------------------------------------------------------------------
+ */
+
+enum SystemRole {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum CompanyStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum ValetStatus {
+  AVAILABLE
+  BUSY
+  AWAY
+}
+
+enum ParkingType {
+  OPEN
+  COVERED
+  TOWER
+  UNDERGROUND
+  ELEVATOR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CANCELLED
+  NO_SHOW
+}
+
+enum TicketStatus {
+  PARKED
+  REQUESTED
+  DELIVERED
+  CANCELLED
+}
+
+enum SlotType {
+  REGULAR
+  PREMIUM
+  ELECTRIC
+  HANDICAPPED
+}
+
+enum AssignmentRole {
+  RECEPTOR
+  DRIVER
+  DELIVERER
+}
+
+enum NotificationType {
+  PUSH
+  SMS
+  EMAIL
+}
+
+enum NotificationStatus {
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | CORE
+ * |--------------------------------------------------------------------------
+ */
+
+model Company {
+  id             String        @id @default(uuid())
+  legalName      String
+  commercialName String?
+  taxId          String        @unique
+  countryCode    String        @default("CR")
+  currency       String        @default("CRC")
+  timezone       String        @default("UTC")
+  billingEmail   String?
+  contactPhone   String?
+  legalAddress   String?
+  brandingConfig Json?
+  status         CompanyStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  users    User[]
+  clients  Client[]
+  valets   Valet[]
+  parkings Parking[]
+  vehicles Vehicle[]
+  bookings Booking[]
+  tickets  Ticket[]
+}
+
+model User {
+  id             String     @id @default(uuid())
+  companyId      String
+  firstName      String
+  lastName       String
+  email          String     @unique
+  passwordHash   String
+  avatarUrl      String?
+  timezone       String     @default("UTC")
+  phone          String?
+  phoneVerified  Boolean    @default(false)
+  systemRole     SystemRole @default(CUSTOMER)
+  pushToken      String?
+  lastLogin      DateTime?
+  isActive       Boolean    @default(true)
+  appPreferences Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company          Company           @relation(fields: [companyId], references: [id])
+  client           Client?
+  valet            Valet?
+  auditLogs        AuditLog[]
+  notificationLogs NotificationLog[]
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | PROFILES
+ * |--------------------------------------------------------------------------
+ */
+
+model Client {
+  id             String @id @default(uuid())
+  companyId      String
+  userId         String @unique
+  governmentId   String @unique
+  emergencyPhone Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company  Company         @relation(fields: [companyId], references: [id])
+  user     User            @relation(fields: [userId], references: [id])
+  vehicles ClientVehicle[]
+  bookings Booking[]
+  tickets  Ticket[]
+}
+
+model Valet {
+  id               String      @id @default(uuid())
+  companyId        String
+  userId           String      @unique
+  currentParkingId String?
+  licenseNumber    String
+  licenseExpiry    DateTime
+  currentStatus    ValetStatus @default(AVAILABLE)
+  ratingAvg        Float       @default(5)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company       Company            @relation(fields: [companyId], references: [id])
+  user          User               @relation(fields: [userId], references: [id])
+  assignments   TicketAssignment[]
+  damageReports DamageReport[]
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | PARKING
+ * |--------------------------------------------------------------------------
+ */
+
+model Parking {
+  id              String      @id @default(uuid())
+  companyId       String
+  name            String
+  address         String
+  latitude        Float?
+  longitude       Float?
+  geofenceRadius  Float       @default(50)
+  type            ParkingType @default(OPEN)
+  totalSlots      Int
+  requiresBooking Boolean     @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company  Company       @relation(fields: [companyId], references: [id])
+  slots    ParkingSlot[]
+  tickets  Ticket[]
+  bookings Booking[]
+}
+
+model ParkingSlot {
+  id          String   @id @default(uuid())
+  parkingId   String
+  label       String
+  isAvailable Boolean  @default(true)
+  slotType    SlotType @default(REGULAR)
+
+  // relations
+  parking Parking  @relation(fields: [parkingId], references: [id])
+  tickets Ticket[]
+
+  @@unique([parkingId, label])
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | VEHICLES
+ * |--------------------------------------------------------------------------
+ */
+
+model Vehicle {
+  id          String @id @default(uuid())
+  companyId   String
+  countryCode String @default("CR")
+  plate       String
+  brand       String
+  model       String
+  year        Int?
+  dimensions  Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company  Company         @relation(fields: [companyId], references: [id])
+  owners   ClientVehicle[]
+  tickets  Ticket[]
+  bookings Booking[]
+
+  @@unique([plate, countryCode])
+}
+
+model ClientVehicle {
+  id        String  @id @default(uuid())
+  clientId  String
+  vehicleId String
+  isPrimary Boolean @default(false)
+
+  client  Client  @relation(fields: [clientId], references: [id])
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | OPERATIONS
+ * |--------------------------------------------------------------------------
+ */
+
+model Booking {
+  id                 String        @id @default(uuid())
+  companyId          String
+  clientId           String
+  vehicleId          String
+  parkingId          String
+  scheduledEntryTime DateTime
+  scheduledExitTime  DateTime?
+  status             BookingStatus @default(PENDING)
+  qrCodeReference    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  company Company @relation(fields: [companyId], references: [id])
+  client  Client  @relation(fields: [clientId], references: [id])
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+  parking Parking @relation(fields: [parkingId], references: [id])
+  ticket  Ticket?
+}
+
+model Ticket {
+  id        String       @id @default(uuid())
+  companyId String
+  bookingId String?      @unique
+  parkingId String
+  vehicleId String
+  clientId  String
+  slotId    String?
+  status    TicketStatus @default(PARKED)
+  entryTime DateTime     @default(now())
+  exitTime  DateTime?
+
+  // relations
+  company     Company            @relation(fields: [companyId], references: [id])
+  booking     Booking?           @relation(fields: [bookingId], references: [id])
+  parking     Parking            @relation(fields: [parkingId], references: [id])
+  vehicle     Vehicle            @relation(fields: [vehicleId], references: [id])
+  client      Client             @relation(fields: [clientId], references: [id])
+  slot        ParkingSlot?       @relation(fields: [slotId], references: [id])
+  assignments TicketAssignment[]
+  damages     DamageReport[]
+  review      TicketReview?
+  auditLogs   AuditLog[]
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | TRACEABILITY
+ * |--------------------------------------------------------------------------
+ */
+
+model TicketAssignment {
+  id         String         @id @default(uuid())
+  ticketId   String
+  valetId    String
+  role       AssignmentRole
+  assignedAt DateTime       @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+  valet  Valet  @relation(fields: [valetId], references: [id])
+}
+
+model DamageReport {
+  id          String @id @default(uuid())
+  ticketId    String
+  valetId     String
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ticket Ticket        @relation(fields: [ticketId], references: [id])
+  valet  Valet         @relation(fields: [valetId], references: [id])
+  photos DamagePhoto[]
+}
+
+model DamagePhoto {
+  id             String  @id @default(uuid())
+  damageReportId String
+  url            String
+  label          String?
+
+  uploadedAt DateTime @default(now())
+
+  damageReport DamageReport @relation(fields: [damageReportId], references: [id])
+}
+
+model TicketReview {
+  id       String  @id @default(uuid())
+  ticketId String  @unique
+  stars    Int
+  comment  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+}
+
+/**
+ * |--------------------------------------------------------------------------
+ * | AUDIT & NOTIFICATIONS
+ * |--------------------------------------------------------------------------
+ */
+
+model AuditLog {
+  id        String  @id @default(uuid())
+  ticketId  String?
+  userId    String
+  action    String
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id])
+  ticket Ticket? @relation(fields: [ticketId], references: [id])
+}
+
+model NotificationLog {
+  id     String             @id @default(uuid())
+  userId String
+  title  String
+  body   String
+  type   NotificationType
+  status NotificationStatus @default(SENT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}

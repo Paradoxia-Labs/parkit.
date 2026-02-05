@@ -1,0 +1,5 @@
+# API specific
+logs/
+
+# Prisma local DB (solo si usas SQLite en local)
+prisma/dev.db
