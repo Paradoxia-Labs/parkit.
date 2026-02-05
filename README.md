@@ -130,15 +130,14 @@ and shared logic aligned.
 
 parkit/
 ├── apps/
-│ ├── api/ Backend API
-│ ├── web/ Web administration dashboard
-│ └── mobile/ Mobile application
+│   ├── api/        # Backend API
+│   ├── web/        # Web administration dashboard
+│   └── mobile/     # Mobile application
 ├── packages/
-│ └── shared/ Shared types, utilities, and contracts
+│   └── shared/     # Shared types, utilities, and contracts
 ├── docs/
-│ └── architecture/
+│   └── architecture/ # Architecture and technical documentation
 └── README.md
-
 
 ---
 
