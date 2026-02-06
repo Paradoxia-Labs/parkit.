@@ -1,4 +1,4 @@
-# parkit.
+# Parkit
 
 parkit. is a **B2B2C parking and valet management platform** designed for companies
 that operate parking facilities, valet services, or hybrid parking models.
