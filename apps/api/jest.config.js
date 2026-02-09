@@ -14,6 +14,8 @@ module.exports = {
     "/node_modules/",
     "/dist/",
   ],
+  coverageDirectory: "<rootDir>/coverage",
+  coverageReporters: ["text", "lcov", "json"],
   moduleFileExtensions: ["ts", "js", "json"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
