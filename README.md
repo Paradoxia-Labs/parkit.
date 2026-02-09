@@ -126,18 +126,68 @@ Includes:
 This repository follows a **monorepo architecture** to keep all applications
 and shared logic aligned.
 
-
-
+```
 parkit/
 ├── apps/
-│   ├── api/        # Backend API
-│   ├── web/        # Web administration dashboard
-│   └── mobile/     # Mobile application
+│   ├── api/                           # Backend API (Express + TypeScript + Prisma)
+│   │   ├── src/
+│   │   │   ├── app.ts                # Express app setup
+│   │   │   ├── server.ts             # Server entry point
+│   │   │   ├── config/
+│   │   │   │   └── env.ts            # Environment configuration
+│   │   │   ├── modules/              # Business logic modules
+│   │   │   │   ├── audit/            # Audit logging
+│   │   │   │   ├── auth/             # Authentication & JWT
+│   │   │   │   ├── bookings/         # Booking management
+│   │   │   │   ├── clients/          # Customer management
+│   │   │   │   ├── companies/        # Company/tenant management
+│   │   │   │   ├── notifications/    # Notification system
+│   │   │   │   ├── parkings/         # Parking facilities
+│   │   │   │   ├── tickets/          # Parking tickets
+│   │   │   │   ├── users/            # User management
+│   │   │   │   ├── valets/           # Valet staff
+│   │   │   │   └── vehicles/         # Vehicle registry
+│   │   │   ├── shared/
+│   │   │   │   ├── middleware/       # Auth & validation middleware
+│   │   │   │   ├── utils/            # Helper functions
+│   │   │   │   └── prisma.ts         # Prisma client
+│   │   │   └── types/
+│   │   │       └── express.d.ts      # Express request types
+│   │   ├── prisma/
+│   │   │   ├── schema.prisma         # Database schema
+│   │   │   └── migrations/           # Database migrations
+│   │   ├── dist/                     # Compiled JavaScript (generated)
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── .eslintrc.cjs
+│   ├── web/                           # Web admin dashboard (Next.js) [WIP]
+│   └── mobile/                        # Mobile app (React Native) [WIP]
 ├── packages/
-│   └── shared/     # Shared types, utilities, and contracts
+│   └── shared/                        # Shared types & utilities [WIP]
 ├── docs/
-│   └── architecture/ # Architecture and technical documentation
-└── README.md
+│   ├── README.md                      # Documentation index
+│   ├── api/
+│   │   └── README.md                  # API developer notes & quickstart
+│   ├── architecture/
+│   │   ├── README.md                  # Architecture overview
+│   │   └── parkit.sql                 # Canonical database schema
+│   ├── env.md                         # Environment variables reference
+│   ├── openapi.yaml                   # OpenAPI specification (placeholder)
+│   └── bd/                            # Additional database docs
+├── tsconfig.json                      # Root TypeScript config
+├── package.json                       # Root package manifest
+├── package-lock.json
+├── .gitignore
+├── LICENSE
+└── README.md                          # This file
+```
+
+**Key files:**
+- `apps/api/src/app.ts` – Express app initialization
+- `apps/api/prisma/schema.prisma` – Prisma database schema
+- `apps/api/.eslintrc.cjs` – Linting configuration
+- `docs/openapi.yaml` – API specification
+- `docs/architecture/parkit.sql` – Database schema reference
 
 ---
 
@@ -191,6 +241,165 @@ The project is currently focused on:
 
 Features and applications will be incrementally built following
 a backend-first approach.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- **Node.js** 18+ and npm
+- **PostgreSQL** (or Neon account for serverless hosting)
+- Git
+
+### Local Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Paradoxia-Labs/parkit.git
+cd parkit
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+npm --prefix apps/api install
+```
+
+3. Configure environment variables (see `docs/env.md`):
+
+```bash
+cp apps/api/.env.example apps/api/.env
+# Edit apps/api/.env with your DATABASE_URL and JWT_SECRET
+```
+
+4. Run database migrations:
+
+```bash
+npm --prefix apps/api run prisma migrate deploy
+```
+
+5. Start the API in development mode:
+
+```bash
+npm --prefix apps/api run dev
+```
+
+The API will be available at `http://localhost:3000`.
+
+---
+
+## Development
+
+### Key directories
+
+- `apps/api/` – Express backend API
+- `apps/web/` – Next.js web dashboard
+- `apps/mobile/` – React Native mobile app
+- `packages/shared/` – Shared types and utilities
+- `docs/` – Documentation (architecture, API, env vars, etc.)
+
+### Available commands
+
+**API**:
+
+```bash
+cd apps/api
+npm run dev          # Start development server (ts-node-dev)
+npm run build        # Build TypeScript
+npm run start        # Run compiled JavaScript
+npm run lint         # Run ESLint with autofix
+npm run prisma migrate dev  # Create and apply migrations interactively
+npm run prisma studio      # Open Prisma Studio GUI
+```
+
+**Root**:
+
+```bash
+npm install          # Install all dependencies
+npm run build        # Build all packages
+npm run lint         # Lint all packages
+```
+
+### Code style & Quality
+
+- **TypeScript** – Strict mode enabled
+- **ESLint** – Enforces code quality
+- **Prettier** – Auto-formats code
+- **No `any` types** – Use explicit types or DTO types
+
+---
+
+## Architecture Overview
+
+The system uses a **multi-tenant** design:
+
+- **Companies** – organizations that manage parking facilities
+- **Customers** – end users who book or use parking
+- **Valets** – staff who handle parking operations
+
+All data is scoped by `companyId` to ensure isolation and multi-tenancy.
+
+### Authentication
+
+- JWT-based authentication
+- Required JWT claims: `userId`, `role`, `companyId`
+- Populated by `requireAuth` middleware on protected routes
+
+### Database
+
+- PostgreSQL with Prisma ORM
+- Migrations managed in `apps/api/prisma/migrations/`
+- Current schema: `docs/architecture/parkit.sql`
+
+---
+
+## Documentation
+
+All project documentation is in the `docs/` folder:
+
+- `docs/README.md` – Documentation index
+- `docs/architecture/` – System architecture and schema
+- `docs/api/` – API developer notes and quickstart
+- `docs/env.md` – Environment variables reference
+- `docs/openapi.yaml` – OpenAPI spec (placeholder)
+
+---
+
+## Contributing
+
+We welcome contributions! Please:
+
+1. Create a feature branch: `git checkout -b feature/your-feature`
+2. Make your changes and commit: `git commit -m "feat: describe your changes"`
+3. Ensure code passes linting and builds: `npm run build && npm run lint`
+4. Push and open a pull request against `development` branch
+5. Include a clear description of changes and rationale
+
+### Commit message conventions
+
+- `feat: ` – new feature
+- `fix: ` – bug fix
+- `refactor: ` – code refactor
+- `docs: ` – documentation only
+- `chore: ` – dependencies, tooling
+
+---
+
+## License
+
+[Add license here – e.g., MIT, Apache 2.0, proprietary]
+
+---
+
+## Support & Contact
+
+For questions, issues, or feedback:
+
+- Open an issue on GitHub
+- Contact: Luis Herrera Quesada
 
 ---
 
