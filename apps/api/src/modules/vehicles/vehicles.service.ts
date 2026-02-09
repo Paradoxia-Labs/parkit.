@@ -1,0 +1,158 @@
+import { prisma } from "../../shared/prisma";
+
+interface CreateVehicleDTO {
+  plate: string;
+  brand: string;
+  model: string;
+  year?: number;
+  countryCode?: string;
+  dimensions?: Record<string, unknown>;
+}
+
+interface UpdateVehicleDTO {
+  brand?: string;
+  model?: string;
+  year?: number;
+  dimensions?: Record<string, unknown>;
+}
+
+export class VehiclesService {
+  static async create(companyId: string, data: CreateVehicleDTO) {
+    const existingVehicle = await prisma.vehicle.findUnique({
+      where: {
+        plate_countryCode: {
+          plate: data.plate,
+          countryCode: data.countryCode || "CR",
+        },
+      },
+    });
+
+    if (existingVehicle) {
+      throw new Error("Vehicle with this plate already exists");
+    }
+
+    return prisma.vehicle.create({
+      data: {
+        companyId,
+        plate: data.plate,
+        brand: data.brand,
+        model: data.model,
+        year: data.year,
+        countryCode: data.countryCode || "CR",
+        dimensions: data.dimensions || null,
+      },
+    });
+  }
+
+  static async list(companyId: string) {
+    return prisma.vehicle.findMany({
+      where: { companyId },
+      include: {
+        owners: {
+          include: {
+            client: {
+              select: {
+                id: true,
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  static async getById(companyId: string, vehicleId: string) {
+    return prisma.vehicle.findFirst({
+      where: { id: vehicleId, companyId },
+      include: {
+        owners: {
+          include: {
+            client: {
+              select: {
+                id: true,
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        tickets: {
+          select: {
+            id: true,
+            status: true,
+            entryTime: true,
+            exitTime: true,
+          },
+          orderBy: { entryTime: "desc" },
+          take: 10,
+        },
+      },
+    });
+  }
+
+  static async update(
+    companyId: string,
+    vehicleId: string,
+    data: UpdateVehicleDTO
+  ) {
+    return prisma.vehicle.update({
+      where: { id: vehicleId },
+      data: {
+        brand: data.brand,
+        model: data.model,
+        year: data.year,
+        dimensions: data.dimensions,
+      },
+      include: {
+        owners: {
+          include: {
+            client: true,
+          },
+        },
+      },
+    });
+  }
+
+  static async getByPlate(
+    companyId: string,
+    plate: string,
+    countryCode: string = "CR"
+  ) {
+    return prisma.vehicle.findFirst({
+      where: {
+        plate,
+        countryCode,
+        companyId,
+      },
+      include: {
+        owners: {
+          include: {
+            client: {
+              select: {
+                id: true,
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+}
