@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 export interface CreateCompanyDTO {
   legalName: string;
   commercialName?: string;
@@ -8,7 +10,7 @@ export interface CreateCompanyDTO {
   billingEmail?: string;
   contactPhone?: string;
   legalAddress?: string;
-  brandingConfig?: Record<string, unknown>;
+  brandingConfig?: Prisma.InputJsonValue;
 }
 
 export interface UpdateCompanyDTO {
@@ -17,6 +19,6 @@ export interface UpdateCompanyDTO {
   billingEmail?: string;
   contactPhone?: string;
   legalAddress?: string;
-  brandingConfig?: Record<string, unknown>;
+  brandingConfig?: Prisma.InputJsonValue;
   status?: "PENDING" | "ACTIVE" | "SUSPENDED" | "INACTIVE";
 }

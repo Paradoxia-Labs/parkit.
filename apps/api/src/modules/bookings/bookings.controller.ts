@@ -21,9 +21,8 @@ export class BookingsController {
 
   static async list(req: Request, res: Response) {
     try {
-      const { status, clientId } = req.query;
-      const statusStr = parseQueryParam(status);
-      const clientIdStr = parseQueryParam(clientId);
+      const statusStr = parseQueryParam(req.query.status as string | string[] | undefined);
+      const clientIdStr = parseQueryParam(req.query.clientId as string | string[] | undefined);
 
       const bookings = await BookingsService.list(
         req.user?.companyId!,
@@ -73,10 +72,10 @@ export class BookingsController {
       );
 
       res.json(booking);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -90,10 +89,10 @@ export class BookingsController {
       );
 
       res.json(booking);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

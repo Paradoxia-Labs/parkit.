@@ -1,9 +1,11 @@
+import type { ParkingType, SlotType } from "@prisma/client";
+
 export interface CreateParkingDTO {
   name: string;
   address: string;
   latitude?: number;
   longitude?: number;
-  type?: "OPEN" | "COVERED" | "TOWER" | "UNDERGROUND" | "ELEVATOR";
+  type?: ParkingType;
   totalSlots: number;
   requiresBooking?: boolean;
 }
@@ -13,7 +15,7 @@ export interface UpdateParkingDTO {
   address?: string;
   latitude?: number;
   longitude?: number;
-  type?: string;
+  type?: ParkingType;
   requiresBooking?: boolean;
 }
 

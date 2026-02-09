@@ -1,20 +1,14 @@
+import type { Prisma } from "@prisma/client";
+
 export interface CreateClientDTO {
   userId: string;
   governmentId: string;
-  emergencyPhone?: {
-    name: string;
-    phone: string;
-    relationship: string;
-  };
+  emergencyPhone?: Prisma.InputJsonValue;
 }
 
 export interface UpdateClientDTO {
   governmentId?: string;
-  emergencyPhone?: {
-    name: string;
-    phone: string;
-    relationship: string;
-  };
+  emergencyPhone?: Prisma.InputJsonValue;
 }
 
 export interface ClientResponse {
@@ -22,7 +16,7 @@ export interface ClientResponse {
   userId: string;
   governmentId: string;
   companyId: string;
-  emergencyPhone?: Record<string, unknown>;
+  emergencyPhone?: Prisma.JsonValue;
   createdAt: Date;
   updatedAt: Date;
 }

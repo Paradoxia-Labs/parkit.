@@ -10,10 +10,10 @@ export class ClientsController {
       );
 
       res.status(201).json(client);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -23,10 +23,10 @@ export class ClientsController {
       const clients = await ClientsService.list(req.user?.companyId!);
 
       res.json(clients);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -44,10 +44,10 @@ export class ClientsController {
       }
 
       res.json(client);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -62,10 +62,10 @@ export class ClientsController {
       );
 
       res.json(client);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -79,10 +79,10 @@ export class ClientsController {
       );
 
       res.json(vehicles);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -97,10 +97,10 @@ export class ClientsController {
       );
 
       res.status(201).json(clientVehicle);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

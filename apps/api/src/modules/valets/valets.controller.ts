@@ -21,8 +21,7 @@ export class ValetsController {
 
   static async list(req: Request, res: Response) {
     try {
-      const { status } = req.query;
-      const statusStr = parseQueryParam(status);
+      const statusStr = parseQueryParam(req.query.status as string | string[] | undefined);
 
       const valets = await ValetsService.list(
         req.user?.companyId!,
@@ -51,10 +50,10 @@ export class ValetsController {
       }
 
       res.json(valet);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

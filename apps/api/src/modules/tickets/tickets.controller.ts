@@ -21,10 +21,9 @@ export class TicketsController {
 
   static async list(req: Request, res: Response) {
     try {
-      const { status, clientId, valetId } = req.query;
-      const statusStr = parseQueryParam(status);
-      const clientIdStr = parseQueryParam(clientId);
-      const valetIdStr = parseQueryParam(valetId);
+      const statusStr = parseQueryParam(req.query.status as string | string[] | undefined);
+      const clientIdStr = parseQueryParam(req.query.clientId as string | string[] | undefined);
+      const valetIdStr = parseQueryParam(req.query.valetId as string | string[] | undefined);
 
       const tickets = await TicketsService.list(
         req.user?.companyId!,

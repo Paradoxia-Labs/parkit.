@@ -5,11 +5,10 @@ import { parseQueryParam } from "../../shared/utils/queryParser";
 export class AuditController {
   static async list(req: Request, res: Response) {
     try {
-      const { ticketId, userId, limit = 50, offset = 0 } = req.query;
-      const ticketIdStr = parseQueryParam(ticketId);
-      const userIdStr = parseQueryParam(userId);
-      const limitStr = parseQueryParam(limit) || "50";
-      const offsetStr = parseQueryParam(offset) || "0";
+      const ticketIdStr = parseQueryParam(req.query.ticketId as string | string[] | undefined);
+      const userIdStr = parseQueryParam(req.query.userId as string | string[] | undefined);
+      const limitStr = parseQueryParam(req.query.limit as string | string[] | undefined) || "50";
+      const offsetStr = parseQueryParam(req.query.offset as string | string[] | undefined) || "0";
 
       const logs = await AuditService.list(
         req.user?.companyId!,

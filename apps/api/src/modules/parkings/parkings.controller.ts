@@ -10,10 +10,10 @@ export class ParkingsController {
       );
 
       res.status(201).json(parking);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -23,10 +23,10 @@ export class ParkingsController {
       const parkings = await ParkingsService.list(req.user?.companyId!);
 
       res.json(parkings);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -44,10 +44,10 @@ export class ParkingsController {
       }
 
       res.json(parking);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -62,10 +62,10 @@ export class ParkingsController {
       );
 
       res.json(parking);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -79,10 +79,10 @@ export class ParkingsController {
       );
 
       res.json(slots);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -96,10 +96,10 @@ export class ParkingsController {
       );
 
       res.json(slots);
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

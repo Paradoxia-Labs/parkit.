@@ -1,4 +1,5 @@
 import { prisma } from "../../shared/prisma";
+import type { Prisma } from "@prisma/client";
 
 interface CreateVehicleDTO {
   plate: string;
@@ -6,14 +7,14 @@ interface CreateVehicleDTO {
   model: string;
   year?: number;
   countryCode?: string;
-  dimensions?: Record<string, unknown>;
+  dimensions?: Prisma.InputJsonValue;
 }
 
 interface UpdateVehicleDTO {
   brand?: string;
   model?: string;
   year?: number;
-  dimensions?: Record<string, unknown>;
+  dimensions?: Prisma.InputJsonValue;
 }
 
 export class VehiclesService {
@@ -39,7 +40,7 @@ export class VehiclesService {
         model: data.model,
         year: data.year,
         countryCode: data.countryCode || "CR",
-        dimensions: data.dimensions || null,
+        ...(data.dimensions ? { dimensions: data.dimensions } : {}),
       },
     });
   }
@@ -113,7 +114,7 @@ export class VehiclesService {
         brand: data.brand,
         model: data.model,
         year: data.year,
-        dimensions: data.dimensions,
+        ...(data.dimensions !== undefined ? { dimensions: data.dimensions } : {}),
       },
       include: {
         owners: {

@@ -73,9 +73,8 @@ export class VehiclesController {
 
   static async getByPlate(req: Request, res: Response) {
     try {
-      const { plate, countryCode = "CR" } = req.query;
-      const plateStr = parseQueryParam(plate) || '';
-      const countryStr = parseQueryParam(countryCode) || 'CR';
+      const plateStr = parseQueryParam(req.query.plate as string | string[] | undefined) || '';
+      const countryStr = parseQueryParam(req.query.countryCode as string | string[] | undefined) || 'CR';
 
       const vehicle = await VehiclesService.getByPlate(
         req.user?.companyId!,

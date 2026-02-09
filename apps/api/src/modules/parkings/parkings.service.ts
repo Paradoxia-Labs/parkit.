@@ -1,11 +1,12 @@
 import { prisma } from "../../shared/prisma";
+import type { ParkingType, SlotType } from "@prisma/client";
 
 interface CreateParkingDTO {
   name: string;
   address: string;
   latitude?: number;
   longitude?: number;
-  type?: string;
+  type?: ParkingType;
   totalSlots: number;
   requiresBooking?: boolean;
 }
@@ -15,7 +16,7 @@ interface UpdateParkingDTO {
   address?: string;
   latitude?: number;
   longitude?: number;
-  type?: string;
+  type?: ParkingType;
   requiresBooking?: boolean;
 }
 
@@ -28,7 +29,7 @@ export class ParkingsService {
         address: data.address,
         latitude: data.latitude,
         longitude: data.longitude,
-        type: (data.type as any) || "OPEN",
+        type: data.type || "OPEN",
         totalSlots: data.totalSlots,
         requiresBooking: data.requiresBooking || false,
       },
@@ -94,7 +95,7 @@ export class ParkingsService {
         address: data.address,
         latitude: data.latitude,
         longitude: data.longitude,
-        type: data.type ? (data.type as any) : undefined,
+        ...(data.type !== undefined ? { type: data.type } : {}),
         requiresBooking: data.requiresBooking,
       },
       include: {
@@ -137,7 +138,7 @@ export class ParkingsService {
 
   static async createSlots(
     parkingId: string,
-    slots: Array<{ label: string; slotType?: string }>
+    slots: Array<{ label: string; slotType?: SlotType }>
   ) {
     const createdSlots = [];
 
@@ -146,7 +147,7 @@ export class ParkingsService {
         data: {
           parkingId,
           label: slot.label,
-          slotType: (slot.slotType as any) || "REGULAR",
+          slotType: slot.slotType || "REGULAR",
         },
       });
       createdSlots.push(created);

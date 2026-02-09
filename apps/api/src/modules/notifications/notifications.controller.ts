@@ -40,10 +40,10 @@ export class NotificationsController {
       await NotificationsService.markAllAsRead(userId);
 
       res.status(204).send();
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(400).json({
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }

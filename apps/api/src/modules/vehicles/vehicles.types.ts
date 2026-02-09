@@ -1,17 +1,19 @@
+import type { Prisma } from "@prisma/client";
+
 export interface CreateVehicleDTO {
   plate: string;
   brand: string;
   model: string;
   year?: number;
   countryCode?: string;
-  dimensions?: Record<string, unknown>;
+  dimensions?: Prisma.InputJsonValue;
 }
 
 export interface UpdateVehicleDTO {
   brand?: string;
   model?: string;
   year?: number;
-  dimensions?: Record<string, unknown>;
+  dimensions?: Prisma.InputJsonValue;
 }
 
 export interface VehicleResponse {
