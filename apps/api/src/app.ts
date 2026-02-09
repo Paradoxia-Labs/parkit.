@@ -1,4 +1,15 @@
 import express from "express";
+import authRoutes from "./modules/auth/auth.routes";
+import companyRoutes from "./modules/companies/companies.routes";
+import usersRoutes from "./modules/users/users.routes";
+import auditRoutes from "./modules/audit/audit.routes";
+import bookingsRoutes from "./modules/bookings/bookings.routes";
+import clientsRoutes from "./modules/clients/clients.routes";
+import notificationsRoutes from "./modules/notifications/notifications.routes";
+import parkingsRoutes from "./modules/parkings/parkings.routes";
+import ticketsRoutes from "./modules/tickets/tickets.routes";
+import valetsRoutes from "./modules/valets/valets.routes";
+import vehiclesRoutes from "./modules/vehicles/vehicles.routes";
 
 export const app = express();
 
@@ -7,3 +18,15 @@ app.use(express.json());
 app.get("/health", (_, res) => {
   res.json({ status: "ok" });
 });
+
+app.use("/auth", authRoutes);
+app.use("/companies", companyRoutes);
+app.use("/users", usersRoutes);
+app.use("/audit", auditRoutes);
+app.use("/bookings", bookingsRoutes);
+app.use("/clients", clientsRoutes);
+app.use("/notifications", notificationsRoutes);
+app.use("/parkings", parkingsRoutes);
+app.use("/tickets", ticketsRoutes);
+app.use("/valets", valetsRoutes);
+app.use("/vehicles", vehiclesRoutes);

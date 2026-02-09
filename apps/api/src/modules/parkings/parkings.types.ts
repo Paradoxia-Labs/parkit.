@@ -1,0 +1,34 @@
+import type { ParkingType } from "@prisma/client";
+
+export interface CreateParkingDTO {
+  name: string;
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  type?: ParkingType;
+  totalSlots: number;
+  requiresBooking?: boolean;
+}
+
+export interface UpdateParkingDTO {
+  name?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  type?: ParkingType;
+  requiresBooking?: boolean;
+}
+
+export interface ParkingResponse {
+  id: string;
+  companyId: string;
+  name: string;
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  type: string;
+  totalSlots: number;
+  requiresBooking: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
