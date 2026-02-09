@@ -16,6 +16,7 @@ module.exports = {
     node: true,
     es2022: true,
   },
+  ignorePatterns: ['dist/', 'node_modules/', '**/*.test.ts', 'src/__tests__/**'],
   rules: {
     'no-console': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
