@@ -4,7 +4,7 @@ import { UsersService } from "./users.service";
 export class UsersController {
   static async create(req: Request, res: Response) {
     const user = await UsersService.create(
-      req.user?.companyId!,
+      req.user.companyId,
       req.body
     );
 
@@ -12,14 +12,14 @@ export class UsersController {
   }
 
   static async list(req: Request, res: Response) {
-    const users = await UsersService.list(req.user?.companyId!);
+    const users = await UsersService.list(req.user.companyId);
     res.json(users);
   }
 
   static async get(req: Request, res: Response) {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const user = await UsersService.getById(
-      req.user?.companyId!,
+      req.user.companyId,
       id
     );
 
@@ -33,7 +33,7 @@ export class UsersController {
   static async update(req: Request, res: Response) {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const user = await UsersService.update(
-      req.user?.companyId!,
+      req.user.companyId,
       id,
       req.body
     );
@@ -44,7 +44,7 @@ export class UsersController {
   static async deactivate(req: Request, res: Response) {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     await UsersService.deactivate(
-      req.user?.companyId!,
+      req.user.companyId,
       id
     );
 

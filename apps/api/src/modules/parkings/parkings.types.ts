@@ -1,4 +1,4 @@
-import type { ParkingType, SlotType } from "@prisma/client";
+import type { ParkingType } from "@prisma/client";
 
 export interface CreateParkingDTO {
   name: string;

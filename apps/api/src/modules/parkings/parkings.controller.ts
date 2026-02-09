@@ -5,7 +5,7 @@ export class ParkingsController {
   static async create(req: Request, res: Response) {
     try {
       const parking = await ParkingsService.create(
-        req.user?.companyId!,
+        req.user.companyId,
         req.body
       );
 
@@ -20,7 +20,7 @@ export class ParkingsController {
 
   static async list(req: Request, res: Response) {
     try {
-      const parkings = await ParkingsService.list(req.user?.companyId!);
+      const parkings = await ParkingsService.list(req.user.companyId);
 
       res.json(parkings);
     } catch (error: unknown) {
@@ -35,7 +35,7 @@ export class ParkingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const parking = await ParkingsService.getById(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 
@@ -56,7 +56,7 @@ export class ParkingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const parking = await ParkingsService.update(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -74,7 +74,7 @@ export class ParkingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const slots = await ParkingsService.getSlots(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 
@@ -91,7 +91,7 @@ export class ParkingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const slots = await ParkingsService.getAvailableSlots(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 

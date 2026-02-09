@@ -5,7 +5,7 @@ import { SystemRole } from "@prisma/client";
 interface JwtPayload {
   userId: string;
   role: SystemRole;
-  companyId?: string;
+  companyId: string;
 }
 
 export function requireAuth(
@@ -26,10 +26,11 @@ export function requireAuth(
   }
 
   try {
-    const payload = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    ) as JwtPayload;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+    if (!payload.companyId) {
+      return res.status(401).json({ message: "Token missing companyId" });
+    }
 
     req.user = {
       userId: payload.userId,

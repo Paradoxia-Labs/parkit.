@@ -8,7 +8,7 @@ export class CompaniesController {
   }
 
   static async me(req: Request, res: Response) {
-    const company = await CompaniesService.getById(req.user?.companyId!);
+    const company = await CompaniesService.getById(req.user.companyId);
 
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
@@ -19,7 +19,7 @@ export class CompaniesController {
 
   static async update(req: Request, res: Response) {
     const company = await CompaniesService.update(
-      req.user?.companyId!,
+      req.user.companyId,
       req.body
     );
 

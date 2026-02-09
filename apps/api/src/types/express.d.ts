@@ -3,10 +3,10 @@ import { SystemRole } from "@prisma/client";
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      user: {
         userId: string;
         role: SystemRole;
-        companyId?: string;
+        companyId: string;
       };
     }
   }

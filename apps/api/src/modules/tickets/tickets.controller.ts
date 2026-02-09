@@ -6,7 +6,7 @@ export class TicketsController {
   static async create(req: Request, res: Response) {
     try {
       const ticket = await TicketsService.create(
-        req.user?.companyId!,
+        req.user.companyId,
         req.body
       );
 
@@ -26,7 +26,7 @@ export class TicketsController {
       const valetIdStr = parseQueryParam(req.query.valetId as string | string[] | undefined);
 
       const tickets = await TicketsService.list(
-        req.user?.companyId!,
+        req.user.companyId,
         {
           status: statusStr,
           clientId: clientIdStr,
@@ -47,7 +47,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const ticket = await TicketsService.getById(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 
@@ -68,7 +68,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const ticket = await TicketsService.update(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -86,7 +86,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const assignment = await TicketsService.assignValet(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -104,7 +104,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const damageReport = await TicketsService.reportDamage(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -122,7 +122,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const review = await TicketsService.addReview(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -140,7 +140,7 @@ export class TicketsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const ticket = await TicketsService.checkout(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 

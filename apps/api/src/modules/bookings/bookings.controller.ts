@@ -6,7 +6,7 @@ export class BookingsController {
   static async create(req: Request, res: Response) {
     try {
       const booking = await BookingsService.create(
-        req.user?.companyId!,
+        req.user.companyId,
         req.body
       );
 
@@ -25,7 +25,7 @@ export class BookingsController {
       const clientIdStr = parseQueryParam(req.query.clientId as string | string[] | undefined);
 
       const bookings = await BookingsService.list(
-        req.user?.companyId!,
+        req.user.companyId,
         {
           status: statusStr,
           clientId: clientIdStr,
@@ -45,7 +45,7 @@ export class BookingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const booking = await BookingsService.getById(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 
@@ -66,7 +66,7 @@ export class BookingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const booking = await BookingsService.update(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -84,7 +84,7 @@ export class BookingsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const booking = await BookingsService.cancel(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 

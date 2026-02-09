@@ -10,8 +10,8 @@ export class AuditController {
       const limitStr = parseQueryParam(req.query.limit as string | string[] | undefined) || "50";
       const offsetStr = parseQueryParam(req.query.offset as string | string[] | undefined) || "0";
 
-      const logs = await AuditService.list(
-        req.user?.companyId!,
+        const logs = await AuditService.list(
+          req.user.companyId,
         {
           ticketId: ticketIdStr,
           userId: userIdStr,
@@ -32,8 +32,8 @@ export class AuditController {
   static async getByTicket(req: Request, res: Response) {
     try {
       const ticketId = Array.isArray(req.params.ticketId) ? req.params.ticketId[0] : req.params.ticketId;
-      const logs = await AuditService.getByTicket(
-        req.user?.companyId!,
+        const logs = await AuditService.getByTicket(
+          req.user.companyId,
         ticketId
       );
 
@@ -49,8 +49,8 @@ export class AuditController {
   static async getByUser(req: Request, res: Response) {
     try {
       const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
-      const logs = await AuditService.getByUser(
-        req.user?.companyId!,
+        const logs = await AuditService.getByUser(
+          req.user.companyId,
         userId
       );
 

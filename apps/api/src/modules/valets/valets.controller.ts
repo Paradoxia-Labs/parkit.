@@ -6,7 +6,7 @@ export class ValetsController {
   static async create(req: Request, res: Response) {
     try {
       const valet = await ValetsService.create(
-        req.user?.companyId!,
+        req.user.companyId,
         req.body
       );
 
@@ -24,7 +24,7 @@ export class ValetsController {
       const statusStr = parseQueryParam(req.query.status as string | string[] | undefined);
 
       const valets = await ValetsService.list(
-        req.user?.companyId!,
+        req.user.companyId,
         statusStr
       );
 
@@ -41,7 +41,7 @@ export class ValetsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const valet = await ValetsService.getById(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 
@@ -62,7 +62,7 @@ export class ValetsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const valet = await ValetsService.update(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body
       );
@@ -80,7 +80,7 @@ export class ValetsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       const valet = await ValetsService.updateStatus(
-        req.user?.companyId!,
+        req.user.companyId,
         id,
         req.body.status
       );
@@ -98,7 +98,7 @@ export class ValetsController {
     try {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       await ValetsService.deactivate(
-        req.user?.companyId!,
+        req.user.companyId,
         id
       );
 

@@ -1,6 +1,5 @@
 import { prisma } from "../../shared/prisma";
 import { ValetStatus } from "@prisma/client";
-import { hashPassword } from "../auth/auth.utils";
 
 interface CreateValetDTO {
   userId: string;
