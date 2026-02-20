@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuditService } from "./audit.service";
 import { parseQueryParam } from "../../shared/utils/queryParser";
+import { fail, ok } from "../../shared/utils/response";
 
 export class AuditController {
   static async list(req: Request, res: Response) {
@@ -20,12 +21,13 @@ export class AuditController {
         parseInt(offsetStr)
       );
 
-      res.json(logs);
+      return ok(res, logs);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -37,12 +39,13 @@ export class AuditController {
         ticketId
       );
 
-      res.json(logs);
+      return ok(res, logs);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -54,12 +57,13 @@ export class AuditController {
         userId
       );
 
-      res.json(logs);
+      return ok(res, logs);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

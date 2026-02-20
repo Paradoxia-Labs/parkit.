@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { VehiclesService } from "./vehicles.service";
 import { parseQueryParam } from "../../shared/utils/queryParser";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class VehiclesController {
   static async create(req: Request, res: Response) {
@@ -10,12 +11,13 @@ export class VehiclesController {
         req.body
       );
 
-      res.status(201).json(vehicle);
+      return created(res, vehicle);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -23,12 +25,13 @@ export class VehiclesController {
     try {
       const vehicles = await VehiclesService.list(req.user.companyId);
 
-      res.json(vehicles);
+      return ok(res, vehicles);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -41,15 +44,16 @@ export class VehiclesController {
       );
 
       if (!vehicle) {
-        return res.status(404).json({ message: "Vehicle not found" });
+        return notFound(res, "Vehicle not found");
       }
 
-      res.json(vehicle);
+      return ok(res, vehicle);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -62,12 +66,13 @@ export class VehiclesController {
         req.body
       );
 
-      res.json(vehicle);
+      return ok(res, vehicle);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -83,15 +88,16 @@ export class VehiclesController {
       );
 
       if (!vehicle) {
-        return res.status(404).json({ message: "Vehicle not found" });
+        return notFound(res, "Vehicle not found");
       }
 
-      res.json(vehicle);
+      return ok(res, vehicle);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

@@ -16,7 +16,7 @@ export const app = express();
 app.use(express.json());
 
 app.get("/health", (_, res) => {
-  res.json({ status: "ok" });
+  res.json({ success: true, data: { status: "ok" } });
 });
 
 app.use("/auth", authRoutes);

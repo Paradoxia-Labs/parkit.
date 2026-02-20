@@ -1,20 +1,19 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
+import { created, fail, ok } from "../../shared/utils/response";
 
 export class AuthController {
   static async register(req: Request, res: Response) {
     try {
       const result = await AuthService.register(req.body);
 
-      res.status(201).json({
-        success: true,
-        data: result,
-      });
+      return created(res, result);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -22,15 +21,13 @@ export class AuthController {
     try {
       const result = await AuthService.login(req.body);
 
-      res.status(200).json({
-        success: true,
-        data: result,
-      });
+      return ok(res, result);
     } catch (error: unknown) {
-      res.status(401).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        401,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

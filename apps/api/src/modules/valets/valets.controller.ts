@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ValetsService } from "./valets.service";
 import { parseQueryParam } from "../../shared/utils/queryParser";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class ValetsController {
   static async create(req: Request, res: Response) {
@@ -10,12 +11,13 @@ export class ValetsController {
         req.body
       );
 
-      res.status(201).json(valet);
+      return created(res, valet);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -28,12 +30,13 @@ export class ValetsController {
         statusStr
       );
 
-      res.json(valets);
+      return ok(res, valets);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -46,15 +49,16 @@ export class ValetsController {
       );
 
       if (!valet) {
-        return res.status(404).json({ message: "Valet not found" });
+        return notFound(res, "Valet not found");
       }
 
-      res.json(valet);
+      return ok(res, valet);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -67,12 +71,13 @@ export class ValetsController {
         req.body
       );
 
-      res.json(valet);
+      return ok(res, valet);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -85,12 +90,13 @@ export class ValetsController {
         req.body.status
       );
 
-      res.json(valet);
+      return ok(res, valet);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -102,12 +108,13 @@ export class ValetsController {
         id
       );
 
-      res.status(204).send();
+      return ok(res, null, "Valet deactivated");
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

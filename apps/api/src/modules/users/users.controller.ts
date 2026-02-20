@@ -1,53 +1,94 @@
 import { Request, Response } from "express";
 import { UsersService } from "./users.service";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class UsersController {
   static async create(req: Request, res: Response) {
-    const user = await UsersService.create(
-      req.user.companyId,
-      req.body
-    );
+    try {
+      const user = await UsersService.create(
+        req.user.companyId,
+        req.body
+      );
 
-    res.status(201).json(user);
+      return created(res, user);
+    } catch (error: unknown) {
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
   }
 
   static async list(req: Request, res: Response) {
-    const users = await UsersService.list(req.user.companyId);
-    res.json(users);
+    try {
+      const users = await UsersService.list(req.user.companyId);
+      return ok(res, users);
+    } catch (error: unknown) {
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
   }
 
   static async get(req: Request, res: Response) {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const user = await UsersService.getById(
-      req.user.companyId,
-      id
-    );
+    try {
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const user = await UsersService.getById(
+        req.user.companyId,
+        id
+      );
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      if (!user) {
+        return notFound(res, "User not found");
+      }
+
+      return ok(res, user);
+    } catch (error: unknown) {
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
-
-    res.json(user);
   }
 
   static async update(req: Request, res: Response) {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const user = await UsersService.update(
-      req.user.companyId,
-      id,
-      req.body
-    );
+    try {
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const user = await UsersService.update(
+        req.user.companyId,
+        id,
+        req.body
+      );
 
-    res.json(user);
+      return ok(res, user);
+    } catch (error: unknown) {
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
   }
 
   static async deactivate(req: Request, res: Response) {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    await UsersService.deactivate(
-      req.user.companyId,
-      id
-    );
+    try {
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      await UsersService.deactivate(
+        req.user.companyId,
+        id
+      );
 
-    res.status(204).send();
+      return ok(res, null, "User deactivated");
+    } catch (error: unknown) {
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
+    }
   }
 }

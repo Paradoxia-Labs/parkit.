@@ -26,8 +26,10 @@ export function requireAuth(
   }
 
   try {
+    // Verify JWT signature and extract payload
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
+    // Ensure token contains required company context for multi-tenant isolation
     if (!payload.companyId) {
       return res.status(401).json({ message: "Token missing companyId" });
     }
