@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { NotificationsService } from "./notifications.service";
+import { fail, ok } from "../../shared/utils/response";
 
 export class NotificationsController {
   static async listByUser(req: Request, res: Response) {
@@ -9,12 +10,13 @@ export class NotificationsController {
         userId
       );
 
-      res.json(notifications);
+      return ok(res, notifications);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -25,12 +27,13 @@ export class NotificationsController {
         id
       );
 
-      res.json(notification);
+      return ok(res, notification);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -39,12 +42,13 @@ export class NotificationsController {
       const userId = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
       await NotificationsService.markAllAsRead(userId);
 
-      res.status(204).send();
+      return ok(res, null, "Notifications marked as read");
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -53,12 +57,13 @@ export class NotificationsController {
       const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
       await NotificationsService.delete(id);
 
-      res.status(204).send();
+      return ok(res, null, "Notification deleted");
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

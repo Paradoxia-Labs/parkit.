@@ -34,7 +34,7 @@ export default function LoginScreen() {
         password,
       });
 
-      const { token, user } = response.data;
+      const { token, user } = response.data.data;
 
       await setAuthToken(token);
       await saveUser(user);

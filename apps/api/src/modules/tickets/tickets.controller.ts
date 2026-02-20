@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { TicketsService } from "./tickets.service";
 import { parseQueryParam } from "../../shared/utils/queryParser";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class TicketsController {
   static async create(req: Request, res: Response) {
@@ -10,12 +11,13 @@ export class TicketsController {
         req.body
       );
 
-      res.status(201).json(ticket);
+      return created(res, ticket);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -34,12 +36,13 @@ export class TicketsController {
         }
       );
 
-      res.json(tickets);
+      return ok(res, tickets);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -52,15 +55,16 @@ export class TicketsController {
       );
 
       if (!ticket) {
-        return res.status(404).json({ message: "Ticket not found" });
+        return notFound(res, "Ticket not found");
       }
 
-      res.json(ticket);
+      return ok(res, ticket);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -73,12 +77,13 @@ export class TicketsController {
         req.body
       );
 
-      res.json(ticket);
+      return ok(res, ticket);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -91,12 +96,13 @@ export class TicketsController {
         req.body
       );
 
-      res.status(201).json(assignment);
+      return created(res, assignment);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -109,12 +115,13 @@ export class TicketsController {
         req.body
       );
 
-      res.status(201).json(damageReport);
+      return created(res, damageReport);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -127,12 +134,13 @@ export class TicketsController {
         req.body
       );
 
-      res.status(201).json(review);
+      return created(res, review);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -144,12 +152,13 @@ export class TicketsController {
         id
       );
 
-      res.json(ticket);
+      return ok(res, ticket);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

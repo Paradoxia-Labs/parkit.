@@ -34,6 +34,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     projectId: 'parkit-valet-prod',
   },
   extra: {
-    apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001',
+    apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000',
   },
 });

@@ -3,8 +3,9 @@ import * as SecureStore from 'expo-secure-store';
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: 'VALET' | 'ADMIN';
+  firstName: string;
+  lastName: string;
+  systemRole: 'ADMIN' | 'STAFF' | 'CUSTOMER';
   companyId: string;
 }
 

@@ -1,16 +1,1011 @@
 openapi: 3.0.3
 info:
   title: Parkit API
-  version: 0.1.0
-  description: "OpenAPI spec placeholder for Parkit API. Add paths and components here."
+  version: 0.2.0
+  description: API contract for Parkit using a standard response envelope.
 servers:
-  - url: http://localhost:3000
-paths: {}
+  - url: http://localhost:4000
+tags:
+  - name: Health
+  - name: Auth
+  - name: Companies
+  - name: Users
+  - name: Vehicles
+  - name: Valets
+  - name: Clients
+  - name: Parkings
+  - name: Bookings
+  - name: Tickets
+  - name: Notifications
+  - name: Audit
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+              example:
+                success: true
+                data:
+                  status: ok
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/AuthPayload"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /companies:
+    get:
+      tags: [Companies]
+      summary: List companies
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      tags: [Companies]
+      summary: Create company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompanyRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+  /companies/me:
+    get:
+      tags: [Companies]
+      summary: Get current company
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Companies]
+      summary: Update current company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCompanyRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Users]
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Users]
+      summary: Update user
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    delete:
+      tags: [Users]
+      summary: Deactivate user
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /vehicles:
+    get:
+      tags: [Vehicles]
+      summary: List vehicles
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Vehicles]
+      summary: Create vehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVehicleRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /vehicles/by-plate:
+    get:
+      tags: [Vehicles]
+      summary: Get vehicle by plate
+      parameters:
+        - in: query
+          name: plate
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: countryCode
+          required: false
+          schema:
+            type: string
+            default: CR
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /vehicles/{id}:
+    get:
+      tags: [Vehicles]
+      summary: Get vehicle by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Vehicles]
+      summary: Update vehicle
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVehicleRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /valets:
+    get:
+      tags: [Valets]
+      summary: List valets
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Valets]
+      summary: Create valet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /valets/{id}:
+    get:
+      tags: [Valets]
+      summary: Get valet by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Valets]
+      summary: Update valet
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    delete:
+      tags: [Valets]
+      summary: Deactivate valet
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /valets/{id}/status:
+    patch:
+      tags: [Valets]
+      summary: Update valet status
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+              required: [status]
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /clients:
+    get:
+      tags: [Clients]
+      summary: List clients
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Clients]
+      summary: Create client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClientRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /clients/{id}:
+    get:
+      tags: [Clients]
+      summary: Get client by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Clients]
+      summary: Update client
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClientRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /clients/{id}/vehicles:
+    get:
+      tags: [Clients]
+      summary: List client vehicles
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Clients]
+      summary: Add vehicle to client
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /parkings:
+    get:
+      tags: [Parkings]
+      summary: List parkings
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Parkings]
+      summary: Create parking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateParkingRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /parkings/{id}:
+    get:
+      tags: [Parkings]
+      summary: Get parking by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Parkings]
+      summary: Update parking
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateParkingRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /parkings/{id}/slots:
+    get:
+      tags: [Parkings]
+      summary: List parking slots
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /parkings/{id}/slots/available:
+    get:
+      tags: [Parkings]
+      summary: List available parking slots
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: List bookings
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: clientId
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Bookings]
+      summary: Create booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /bookings/{id}:
+    get:
+      tags: [Bookings]
+      summary: Get booking by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Bookings]
+      summary: Update booking
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBookingRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /bookings/{id}/cancel:
+    patch:
+      tags: [Bookings]
+      summary: Cancel booking
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /tickets:
+    get:
+      tags: [Tickets]
+      summary: List tickets
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: clientId
+          schema:
+            type: string
+        - in: query
+          name: valetId
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+    post:
+      tags: [Tickets]
+      summary: Create ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTicketRequest"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /tickets/{id}:
+    get:
+      tags: [Tickets]
+      summary: Get ticket by id
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Tickets]
+      summary: Update ticket
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTicketRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /tickets/{id}/assign-valet:
+    post:
+      tags: [Tickets]
+      summary: Assign valet to ticket
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /tickets/{id}/damage-report:
+    post:
+      tags: [Tickets]
+      summary: Report ticket damage
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /tickets/{id}/review:
+    post:
+      tags: [Tickets]
+      summary: Add ticket review
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedResponse"
+  /tickets/{id}/checkout:
+    patch:
+      tags: [Tickets]
+      summary: Checkout ticket
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /notifications/user/{userId}:
+    get:
+      tags: [Notifications]
+      summary: List notifications by user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      summary: Mark notification as read
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /notifications/user/{userId}/read-all:
+    patch:
+      tags: [Notifications]
+      summary: Mark all notifications as read
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /notifications/{id}:
+    delete:
+      tags: [Notifications]
+      summary: Delete notification
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /audit:
+    get:
+      tags: [Audit]
+      summary: List audit logs
+      parameters:
+        - in: query
+          name: ticketId
+          schema:
+            type: string
+        - in: query
+          name: userId
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /audit/ticket/{ticketId}:
+    get:
+      tags: [Audit]
+      summary: List audit logs by ticket
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
+  /audit/user/{userId}:
+    get:
+      tags: [Audit]
+      summary: List audit logs by user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          $ref: "#/components/responses/OkResponse"
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  parameters:
+    IdParam:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+  responses:
+    OkResponse:
+      description: Standard success response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiSuccess"
+    CreatedResponse:
+      description: Standard created response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiSuccess"
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+  schemas:
+    ApiSuccess:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+        data:
+          nullable: true
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+            - type: string
+            - type: number
+            - type: boolean
+        message:
+          type: string
+    ApiError:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+        message:
+          type: string
+        errors:
+          nullable: true
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+    AuthPayload:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          type: object
+          additionalProperties: true
+        token:
+          type: string
+    CreateCompanyRequest:
+      type: object
+      required: [name, email]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    UpdateCompanyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    CreateUserRequest:
+      type: object
+      required: [email, name, role]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+    UpdateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+    CreateClientRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    UpdateClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+    CreateVehicleRequest:
+      type: object
+      required: [plate]
+      properties:
+        plate:
+          type: string
+        countryCode:
+          type: string
+          default: CR
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        color:
+          type: string
+    UpdateVehicleRequest:
+      type: object
+      properties:
+        plate:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        color:
+          type: string
+    CreateParkingRequest:
+      type: object
+      required: [name, address, type, capacity]
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        type:
+          type: string
+        capacity:
+          type: integer
+    UpdateParkingRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        type:
+          type: string
+        capacity:
+          type: integer
+    CreateBookingRequest:
+      type: object
+      required: [clientId, parkingId, vehicleId, startTime]
+      properties:
+        clientId:
+          type: string
+        parkingId:
+          type: string
+        vehicleId:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+    UpdateBookingRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        endTime:
+          type: string
+          format: date-time
+    CreateTicketRequest:
+      type: object
+      required: [clientId, parkingId, vehicleId, entryTime]
+      properties:
+        bookingId:
+          type: string
+        clientId:
+          type: string
+        parkingId:
+          type: string
+        vehicleId:
+          type: string
+        entryTime:
+          type: string
+          format: date-time
+    UpdateTicketRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        exitTime:
+          type: string
+          format: date-time
 security:
   - bearerAuth: []

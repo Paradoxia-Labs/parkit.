@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { BookingsService } from "./bookings.service";
 import { parseQueryParam } from "../../shared/utils/queryParser";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class BookingsController {
   static async create(req: Request, res: Response) {
@@ -10,12 +11,13 @@ export class BookingsController {
         req.body
       );
 
-      res.status(201).json(booking);
+      return created(res, booking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -32,12 +34,13 @@ export class BookingsController {
         }
       );
 
-      res.json(bookings);
+      return ok(res, bookings);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -50,15 +53,16 @@ export class BookingsController {
       );
 
       if (!booking) {
-        return res.status(404).json({ message: "Booking not found" });
+        return notFound(res, "Booking not found");
       }
 
-      res.json(booking);
+      return ok(res, booking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -71,12 +75,13 @@ export class BookingsController {
         req.body
       );
 
-      res.json(booking);
+      return ok(res, booking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -88,12 +93,13 @@ export class BookingsController {
         id
       );
 
-      res.json(booking);
+      return ok(res, booking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

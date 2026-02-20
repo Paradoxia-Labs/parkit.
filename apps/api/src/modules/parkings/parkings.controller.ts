@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ParkingsService } from "./parkings.service";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class ParkingsController {
   static async create(req: Request, res: Response) {
@@ -9,12 +10,13 @@ export class ParkingsController {
         req.body
       );
 
-      res.status(201).json(parking);
+      return created(res, parking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -22,12 +24,13 @@ export class ParkingsController {
     try {
       const parkings = await ParkingsService.list(req.user.companyId);
 
-      res.json(parkings);
+      return ok(res, parkings);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -40,15 +43,16 @@ export class ParkingsController {
       );
 
       if (!parking) {
-        return res.status(404).json({ message: "Parking not found" });
+        return notFound(res, "Parking not found");
       }
 
-      res.json(parking);
+      return ok(res, parking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -61,12 +65,13 @@ export class ParkingsController {
         req.body
       );
 
-      res.json(parking);
+      return ok(res, parking);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -78,12 +83,13 @@ export class ParkingsController {
         id
       );
 
-      res.json(slots);
+      return ok(res, slots);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -95,12 +101,13 @@ export class ParkingsController {
         id
       );
 
-      res.json(slots);
+      return ok(res, slots);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }

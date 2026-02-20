@@ -12,12 +12,27 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+type ApiEnvelope<T> = ApiResponse<T> | T;
+
 class ApiClient {
   private client: AxiosInstance;
 
+  private unwrap<T>(payload: ApiEnvelope<T>): T {
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "success" in payload &&
+      "data" in payload
+    ) {
+      return (payload as ApiResponse<T>).data as T;
+    }
+
+    return payload as T;
+  }
+
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api",
+      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
       headers: {
         "Content-Type": "application/json",
       },
@@ -68,23 +83,23 @@ class ApiClient {
 
   // API methods
   public async get<T>(url: string): Promise<T> {
-    const response = await this.client.get<ApiResponse<T>>(url);
-    return response.data.data as T;
+    const response = await this.client.get<ApiEnvelope<T>>(url);
+    return this.unwrap<T>(response.data);
   }
 
   public async post<T>(url: string, data?: unknown): Promise<T> {
-    const response = await this.client.post<ApiResponse<T>>(url, data);
-    return response.data.data as T;
+    const response = await this.client.post<ApiEnvelope<T>>(url, data);
+    return this.unwrap<T>(response.data);
   }
 
   public async patch<T>(url: string, data?: unknown): Promise<T> {
-    const response = await this.client.patch<ApiResponse<T>>(url, data);
-    return response.data.data as T;
+    const response = await this.client.patch<ApiEnvelope<T>>(url, data);
+    return this.unwrap<T>(response.data);
   }
 
   public async delete<T>(url: string): Promise<T> {
-    const response = await this.client.delete<ApiResponse<T>>(url);
-    return response.data.data as T;
+    const response = await this.client.delete<ApiEnvelope<T>>(url);
+    return this.unwrap<T>(response.data);
   }
 }
 

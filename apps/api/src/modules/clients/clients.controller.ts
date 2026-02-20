@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ClientsService } from "./clients.service";
+import { created, fail, notFound, ok } from "../../shared/utils/response";
 
 export class ClientsController {
   static async create(req: Request, res: Response) {
@@ -9,12 +10,13 @@ export class ClientsController {
         req.body
       );
 
-      res.status(201).json(client);
+      return created(res, client);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -22,12 +24,13 @@ export class ClientsController {
     try {
       const clients = await ClientsService.list(req.user.companyId);
 
-      res.json(clients);
+      return ok(res, clients);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -40,15 +43,16 @@ export class ClientsController {
       );
 
       if (!client) {
-        return res.status(404).json({ message: "Client not found" });
+        return notFound(res, "Client not found");
       }
 
-      res.json(client);
+      return ok(res, client);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -61,12 +65,13 @@ export class ClientsController {
         req.body
       );
 
-      res.json(client);
+      return ok(res, client);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -78,12 +83,13 @@ export class ClientsController {
         id
       );
 
-      res.json(vehicles);
+      return ok(res, vehicles);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 
@@ -96,12 +102,13 @@ export class ClientsController {
         req.body
       );
 
-      res.status(201).json(clientVehicle);
+      return created(res, clientVehicle);
     } catch (error: unknown) {
-      res.status(400).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
+      return fail(
+        res,
+        400,
+        error instanceof Error ? error.message : "Unknown error"
+      );
     }
   }
 }
